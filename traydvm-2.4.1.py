@@ -6,6 +6,7 @@
 import os
 import sys
 import argparse
+import subprocess
 
 from gi.repository import UDisks, GLib, Gio, Gtk
 
@@ -128,6 +129,13 @@ elif uuid:
 trayicon = Gtk.StatusIcon.new_from_icon_name(icon_name)
 #trayicon.set_tooltip_text(tooltip)
 
+
+def on_icon_click(icon):
+    mountpoints = ifilesystem.get_cached_property('MountPoints')
+    mountpoints = mountpoints.get_bytestring_array()
+
+    if(mountpoints):
+        subprocess.call(['xdg-open', mountpoints[0]])
 
 def on_menu_click(action, param, udata):
 #############################################################
@@ -314,7 +322,7 @@ def popup_menu(status_icon, button, activate_time, menu):
 # Connect systray icon to popup menu using the above popup_menu() function
 #############################################################
 trayicon.connect('popup-menu', popup_menu, traydvm_menu)
-
+trayicon.connect('activate', on_icon_click)
 #############################################################
 try:
     loop.run()
