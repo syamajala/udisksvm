@@ -10,7 +10,7 @@ import subprocess
 
 from gi.repository import UDisks, GLib, Gio, Gtk
 
-_version = '2.4.1'
+_version = '2.4.2'
 
 # Used for parameter builder on method call
 G_VARIANT_TYPE_VARDICT = GLib.VariantType.new('a{sv}')
@@ -94,11 +94,13 @@ ifilesystem = proxy.get_filesystem()
 
 #############################################################
 # Drive interface needed for optical disks
+opticaldisk = False
 dproxy = manager.get_object(drive)
-idrive = dproxy.get_drive()
-
-opticaldisk = idrive.get_cached_property('Optical')
-opticaldisk = opticaldisk.get_boolean()
+if dproxy is not None:
+    idrive = dproxy.get_drive()
+    if idrive is not None:
+        opticaldisk = idrive.get_cached_property('Optical')
+        opticaldisk = opticaldisk.get_boolean()
 
 #############################################################
 if not opticaldisk:
